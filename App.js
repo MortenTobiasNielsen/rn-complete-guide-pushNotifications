@@ -28,11 +28,31 @@ export default function App() {
       });
   }, []);
 
+  useEffect(() => {
+    const backgroundSubscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log(response);
+      }
+    );
+
+    const foregroundSubscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log(notification);
+      }
+    );
+
+    return () => {
+      backgroundSubscription.remove();
+      foregroundSubscription.remove();
+    };
+  }, []);
+
   const triggerNotificationHandler = () => {
     Notifications.scheduleNotificationAsync({
       content: {
         title: "My first local notification",
         body: "This is the first local notification we am sending",
+        data: { routingData: "Go to the screen specific to the notification" },
       },
       trigger: {
         seconds: 10,
